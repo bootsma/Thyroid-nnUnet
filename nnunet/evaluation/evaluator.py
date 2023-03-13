@@ -344,6 +344,8 @@ def aggregate_scores(test_ref_pairs,
     :return:
     """
 
+    print(f'aggregate_scores: threads {num_threads}')
+
     if type(evaluator) == type:
         evaluator = evaluator()
 
@@ -451,6 +453,7 @@ def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: 
     :param labels: tuple of int with the labels in the dataset. For example (0, 1, 2, 3) for Task001_BrainTumour.
     :return:
     """
+    print(f'evaluate_folder: {metric_kwargs})
     files_gt = subfiles(folder_with_gts, suffix=".nii.gz", join=False)
     files_pred = subfiles(folder_with_predictions, suffix=".nii.gz", join=False)
     assert all([i in files_pred for i in files_gt]), "files missing in folder_with_predictions"
