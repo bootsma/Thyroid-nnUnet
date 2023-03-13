@@ -149,7 +149,7 @@ class Evaluator:
         if metric not in self.metrics:
             self.metrics.append(metric)
 
-    def evaluate(self, test=None, reference=None, advanced=False, **metric_kwargs):
+    def evaluate(self, test=None, reference=None, advanced=True, **metric_kwargs):
         """Compute metrics for segmentations."""
         if test is not None:
             self.set_test(test)
@@ -445,7 +445,7 @@ def aggregate_scores_for_experiment(score_file,
     return json_dict
 
 
-def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: tuple, **metric_kwargs):
+def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: tuple, num_threads=8,  **metric_kwargs):
     """
     writes a summary.json to folder_with_predictions
     :param folder_with_gts: folder where the ground truth segmentations are saved. Must be nifti files.
@@ -453,14 +453,14 @@ def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: 
     :param labels: tuple of int with the labels in the dataset. For example (0, 1, 2, 3) for Task001_BrainTumour.
     :return:
     """
-    print(f'evaluate_folder: {metric_kwargs})
+    print(f'evaluate_folder: {metric_kwargs}')
     files_gt = subfiles(folder_with_gts, suffix=".nii.gz", join=False)
     files_pred = subfiles(folder_with_predictions, suffix=".nii.gz", join=False)
     assert all([i in files_pred for i in files_gt]), "files missing in folder_with_predictions"
     assert all([i in files_gt for i in files_pred]), "files missing in folder_with_gts"
     test_ref_pairs = [(join(folder_with_predictions, i), join(folder_with_gts, i)) for i in files_pred]
     res = aggregate_scores(test_ref_pairs, json_output_file=join(folder_with_predictions, "summary.json"),
-                           num_threads=8, labels=labels, **metric_kwargs)
+                           num_threads=num_threads, labels=labels, **metric_kwargs)
     return res
 
 
@@ -482,5 +482,8 @@ def nnunet_evaluate_folder():
                                                                        "evaluate the background label (0) but in "
                                                                        "this case that would not give any useful "
                                                                        "information.")
+    parser.add_argument('-nt','--num_threads', type=int, required=False, default=8, help="Number of threads to use, default is 8.")
     args = parser.parse_args()
-    return evaluate_folder(args.ref, args.pred, args.l)
+    val = evaluate_folder(args.ref, args.pred, args.l, num_threads = args.num_threads)
+    print('Finished')
+    return val
