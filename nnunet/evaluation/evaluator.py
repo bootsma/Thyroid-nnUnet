@@ -171,7 +171,8 @@ class Evaluator:
         # on the fly, e.g. inside an IPython console
         _funcs = {m: ALL_METRICS[m] for m in self.metrics + self.advanced_metrics}
         frames = inspect.getouterframes(inspect.currentframe())
-        print(f'Starting Metrics: {time.time()}, Advanced: {advanced}',flush=True)
+        s_time = time.time()
+        print(f'Starting Metrics: {s_time}, Advanced: {advanced}',flush=True)
         for metric in self.metrics:
             print(f'Running Metric: {metric} at {time.time()}',flush=True)
             for f in frames:
@@ -184,7 +185,7 @@ class Evaluator:
                 else:
                     raise NotImplementedError(
                         "Metric {} not implemented.".format(metric))
-        print(f'Finished Metrics: {time.time()}',flush=True)
+        print(f'Finished Metrics, Total Time:{time.time()-s_time}',flush=True)
 
         # get results
         self.result = OrderedDict()
