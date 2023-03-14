@@ -364,10 +364,12 @@ def aggregate_scores(test_ref_pairs,
 
     test = [i[0] for i in test_ref_pairs]
     ref = [i[1] for i in test_ref_pairs]
+    print(f'Last: {test[-1]}')
     p = Pool(num_threads)
     all_res = p.map(run_evaluation, zip(test, ref, [evaluator]*len(ref), [metric_kwargs]*len(ref)))
     p.close()
     p.join()
+    print('Done Evaluation.........')
 
     for i in range(len(all_res)):
         all_scores["all"].append(all_res[i])
