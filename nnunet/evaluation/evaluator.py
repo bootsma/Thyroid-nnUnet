@@ -172,7 +172,7 @@ class Evaluator:
         _funcs = {m: ALL_METRICS[m] for m in self.metrics + self.advanced_metrics}
         frames = inspect.getouterframes(inspect.currentframe())
         s_time = time.time()
-        print(f'Test: {self.test}')
+
         print(f'Starting Metrics: {s_time}, Advanced: {advanced}',flush=True)
         for metric in self.metrics:
             #print(f'Running Metric: {metric} at {time.time()}',flush=True)
@@ -301,7 +301,7 @@ class NiftiEvaluator(Evaluator):
             super(NiftiEvaluator, self).set_reference(reference)
 
     def evaluate(self, test=None, reference=None, voxel_spacing=None, **metric_kwargs):
-
+        print(f'Eval: {self.test_nifti}')
         if voxel_spacing is None:
             voxel_spacing = np.array(self.test_nifti.GetSpacing())[::-1]
             metric_kwargs["voxel_spacing"] = voxel_spacing
