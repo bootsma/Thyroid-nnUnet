@@ -275,7 +275,7 @@ class Evaluator:
 class NiftiEvaluator(Evaluator):
 
     def __init__(self, *args, **kwargs):
-
+        self.test_filename = None
         self.test_nifti = None
         self.reference_nifti = None
         super(NiftiEvaluator, self).__init__(*args, **kwargs)
@@ -284,6 +284,7 @@ class NiftiEvaluator(Evaluator):
         """Set the test segmentation."""
 
         if test is not None:
+            self.test_filename = test
             self.test_nifti = sitk.ReadImage(test)
             super(NiftiEvaluator, self).set_test(sitk.GetArrayFromImage(self.test_nifti))
         else:
@@ -301,7 +302,7 @@ class NiftiEvaluator(Evaluator):
             super(NiftiEvaluator, self).set_reference(reference)
 
     def evaluate(self, test=None, reference=None, voxel_spacing=None, **metric_kwargs):
-        print(f'Eval: {self.test_nifti}')
+        print(f'Eval: {self.test_filename}')
         if voxel_spacing is None:
             voxel_spacing = np.array(self.test_nifti.GetSpacing())[::-1]
             metric_kwargs["voxel_spacing"] = voxel_spacing
