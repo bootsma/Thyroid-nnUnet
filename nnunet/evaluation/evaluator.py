@@ -172,9 +172,10 @@ class Evaluator:
         _funcs = {m: ALL_METRICS[m] for m in self.metrics + self.advanced_metrics}
         frames = inspect.getouterframes(inspect.currentframe())
         s_time = time.time()
+        print(f'Test: {test}')
         print(f'Starting Metrics: {s_time}, Advanced: {advanced}',flush=True)
         for metric in self.metrics:
-            print(f'Running Metric: {metric} at {time.time()}',flush=True)
+            #print(f'Running Metric: {metric} at {time.time()}',flush=True)
             for f in frames:
                 if metric in f[0].f_locals:
                     _funcs[metric] = f[0].f_locals[metric]
