@@ -26,6 +26,7 @@ from nnunet.evaluation.metrics import ConfusionMatrix, ALL_METRICS
 from batchgenerators.utilities.file_and_folder_operations import save_json, subfiles, join
 from collections import OrderedDict
 
+import time
 
 class Evaluator:
     """Object that holds test and reference segmentations with label information
@@ -170,7 +171,9 @@ class Evaluator:
         # on the fly, e.g. inside an IPython console
         _funcs = {m: ALL_METRICS[m] for m in self.metrics + self.advanced_metrics}
         frames = inspect.getouterframes(inspect.currentframe())
+        print(f'Starting Metrics: {time.time()}, Advanced: {advanced}',flush=True)
         for metric in self.metrics:
+            print(f'Running Metric: {metric} at {time.time()}',flush=True)
             for f in frames:
                 if metric in f[0].f_locals:
                     _funcs[metric] = f[0].f_locals[metric]
@@ -181,6 +184,7 @@ class Evaluator:
                 else:
                     raise NotImplementedError(
                         "Metric {} not implemented.".format(metric))
+        print(f'Finished Metrics: {time.time()}',flush=True)
 
         # get results
         self.result = OrderedDict()
