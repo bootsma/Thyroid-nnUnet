@@ -26,11 +26,13 @@ from nnunet.training.network_training.nnUNetTrainerV2 import nnUNetTrainerV2
 from nnunet.training.loss_functions.dice_loss import *
 
 ignore_all_other = 1
-keep_any_label_inside = 2
+ignore_outside_main_label = 2
+ignore_inside_main_label = 3 #assumes any could be a mix of benign and malignant
+
 class DC_and_CE_loss_masked(nn.Module):
 
     def __init__(self, soft_dice_kwargs, ce_kwargs, aggregate="sum", weight_ce=1, weight_dice=1,
-                 log_dice=False):
+                 log_dice=False, mask_ignore_type = ignore_outside_main_label  ):
         """
         CAREFUL. Weights for CE and Dice do not need to sum to one. You can set whatever you want.
         :param soft_dice_kwargs:
@@ -52,7 +54,7 @@ class DC_and_CE_loss_masked(nn.Module):
         self.aggregate = aggregate
         self.ce = RobustCrossEntropyLoss(**ce_kwargs)
 
-        self.ignore_label = None
+
 
         if not square_dice:
             self.dc = SoftDiceLoss(apply_nonlin=softmax_helper, **soft_dice_kwargs)
@@ -60,7 +62,7 @@ class DC_and_CE_loss_masked(nn.Module):
             self.dc = SoftDiceLossSquared(apply_nonlin=softmax_helper, **soft_dice_kwargs)
 
         # if we are ignoring the other label we don't mask it out inside the other target label
-        self. mask_type = keep_any_label_inside
+        self.mask_type = mask_ignore_type
 
     def forward(self, net_output, target):
         """
@@ -69,7 +71,13 @@ class DC_and_CE_loss_masked(nn.Module):
         :param target:
         :return:
         """
-
+        print(f'Shape: {target_shape}' )
+        print(f'Target: {target}')
+        mask=target!=0
+        x = mask[:,0]
+        print(f'Value: {x}')
+        print(f'Valuse shape: {x.shape}')
+        raise Exception('Just testing')
         #mask out minor label
         assert target.shape[1] == 1, 'not implemented for one hot encoding'
         seg_labels, cnts = torch.unique(target, return_counts=True)
@@ -109,7 +117,7 @@ class DC_and_CE_loss_masked(nn.Module):
             dc_loss = -torch.log(-dc_loss)
 
         ce_loss = self.ce(net_output, target[:, 0].long()) if self.weight_ce != 0 else 0
-        if self.ignore_label is not None:
+        if ignore_label is not None:
             ce_loss *= mask[:, 0]
             ce_loss = ce_loss.sum() / mask.sum()
 
@@ -119,7 +127,7 @@ class DC_and_CE_loss_masked(nn.Module):
             raise NotImplementedError("nah son") # reserved for other stuff (later)
         return result
 
-class nnUNetTrainerV2_MaskedDiceCE(nnUNetTrainerV2):
+class nnUNetTrainerV2_MaskedDiceCE_IgnoreOut(nnUNetTrainerV2):
     """
     Info for Fabian: same as internal nnUNetTrainerV2_2
     """
@@ -130,5 +138,18 @@ class nnUNetTrainerV2_MaskedDiceCE(nnUNetTrainerV2):
                          deterministic, fp16)
         self.max_num_epochs = 1000
         self.initial_lr = 1e-2
-        self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {})
+        self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, mask_ignore_type =ignore_outside_main_label)
+
+class nnUNetTrainerV2_MaskedDiceCE_IgnoreInside(nnUNetTrainerV2):
+    """
+    Info for Fabian: same as internal nnUNetTrainerV2_2
+    """
+
+    def __init__(self, plans_file, fold, output_folder=None, dataset_directory=None, batch_dice=True, stage=None,
+                 unpack_data=True, deterministic=True, fp16=False):
+        super().__init__(plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
+                         deterministic, fp16)
+        self.max_num_epochs = 1000
+        self.initial_lr = 1e-2
+        self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, mask_ignore_type =ignore_outside_main_label)
 
