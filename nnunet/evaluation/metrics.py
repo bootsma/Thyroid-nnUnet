@@ -102,6 +102,7 @@ class ConfusionMatrix:
         return self.test_empty, self.test_full, self.reference_empty, self.reference_full
 
 
+
 def dice(test=None, reference=None, confusion_matrix=None, nan_for_nonexisting=True, **kwargs):
     """2TP / (2TP + FP + FN)"""
 

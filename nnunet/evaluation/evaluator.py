@@ -27,7 +27,7 @@ from batchgenerators.utilities.file_and_folder_operations import save_json, subf
 from collections import OrderedDict
 
 import time
-
+import os
 class Evaluator:
     """Object that holds test and reference segmentations with label information
     and computes a number of metrics on the two. 'labels' must either be an
