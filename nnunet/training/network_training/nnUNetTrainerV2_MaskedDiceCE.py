@@ -66,12 +66,67 @@ class DC_and_CE_loss_masked(nn.Module):
 
     def forward(self, net_output, target):
         """
+        If we have a segment that should be labeled 2 we want to ignore if it has a label 1 inside
+        and vice versa b/c benign tissue can be found in malignant and small amount of malignant may exist in benign
         target must be b, c, x, y(, z) with c=1
         :param net_output:
         :param target:
         :return:
         """
-        print(f'Shape: {target_shape}' )
+        mask = None
+
+        if target.shape[1] == 1:
+            print('Not suported in one hot encoding')
+            raise Exception('Unsupported masking of labels')
+
+        seg_labels, cnts = torch.unique(target, return_counts=True)
+
+        # we assume that the data is either benign or malignant (label 1 or 2)
+        # though we do handle the case of both but not optimally
+        ignore_label = -1
+        if 1 not in seg_labels:
+            ignore_label = 1
+        elif 2 not in seg_labels:
+            ignore_label = 2
+        elif cnts[seg_labels == 1] > cnts[seg_labels == 2]:
+            print('Target has labels 1 and 2')
+            ignore_label = 1
+            keep_label = 2
+        else:
+            print('Target has labels 1 and 2')
+            ignore_label = 2
+            keep_label = 1
+
+        mask_data2ignore = net_output==self.ignore_label
+        mask_target = target == keep_label
+        #ignore mislabeled data inside the target
+        mask_data2ignore = torch.logical_and(mask_data2ignore, mask_target)
+        mask = ~mask_data2ignore
+        mask = mask.float()
+        target[mask_data2ignore] = 0
+
+
+        dc_loss = self.dc(net_output, target, loss_mask=mask) if self.weight_dice != 0 else 0
+        if self.log_dice:
+            dc_loss = -torch.log(-dc_loss)
+
+        ce_loss = self.ce(net_output, target[:, 0].long()) if self.weight_ce != 0 else 0
+
+
+        if ignore_label is not None:
+            ce_loss *= mask[:, 0]
+            ce_loss = ce_loss.sum() / mask.sum()
+
+        if self.aggregate == "sum":
+            result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
+        else:
+            raise NotImplementedError("nah son") # reserved for other stuff (later)
+        return result
+
+""" Not sure what i was thinking here
+    def forward(self, net_output, target):
+
+        print(f'Shape: {target.shape}' )
         print(f'Target: {target}')
         mask=target!=0
         x = mask[:,0]
@@ -113,6 +168,7 @@ class DC_and_CE_loss_masked(nn.Module):
         mask = mask.float()
 
         dc_loss = self.dc(net_output, target, loss_mask=mask) if self.weight_dice != 0 else 0
+       
         if self.log_dice:
             dc_loss = -torch.log(-dc_loss)
 
@@ -126,6 +182,7 @@ class DC_and_CE_loss_masked(nn.Module):
         else:
             raise NotImplementedError("nah son") # reserved for other stuff (later)
         return result
+"""
 
 class nnUNetTrainerV2_MaskedDiceCE_IgnoreOut(nnUNetTrainerV2):
     """
