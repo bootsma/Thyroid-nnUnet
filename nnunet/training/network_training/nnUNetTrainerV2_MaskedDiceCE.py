@@ -208,5 +208,5 @@ class nnUNetTrainerV2_MaskedDiceCE(nnUNetTrainerV2):#nnUNetTrainerV2_MaskedDiceC
                          deterministic, fp16)
         self.max_num_epochs = 1000
         self.initial_lr = 1e-2
-        self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, mask_ignore_type =ignore_outside_main_label)
+        self.loss = DC_and_CE_loss_masked({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, mask_ignore_type =ignore_outside_main_label)
 
