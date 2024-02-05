@@ -134,8 +134,26 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
     print(f'Y_onehot shape: {y_onehot.shape}')
 
     tp = net_output * y_onehot
-    print(f'tp[0,0,:10,:10,1]:{tp[0,0,:30,:30,:2]}')
-    print(f'tp[0,0,:10,:10,1]:{tp[1, 0, :30, :30, :2]}')
+    print(f'yoh[0,0,:10,:10,1]:{y_onehot[0,0,0,0,0]}')
+    print(f'yoh[1,0,:10,:10,1]:{y_onehot[1, 0, 0, 0, 0]}')
+    print(f'yoh[0,1,:10,:10,1]:{y_onehot[0, 1, 0, 0, 0]}')
+    print(f'yoh[1,1,:10,:10,1]:{y_onehot[1, 1, 0, 0, 0]}')
+    print(f'yoh[0,2,:10,:10,1]:{y_onehot[0, 2, 0, 0, 0]}')
+    print(f'yoh[1,2,:10,:10,1]:{y_onehot[1, 2, 0, 0, 0]}')
+
+    print(f'tp[0,0,:10,:10,1]:{tp[0, 0, 0, 0, 0]}')
+    print(f'tp[1,0,:10,:10,1]:{tp[1, 0, 0, 0, 0]}')
+    print(f'tp[0,1,:10,:10,1]:{tp[0, 1, 0, 0, 0]}')
+    print(f'tp[1,1,:10,:10,1]:{tp[1, 1, 0, 0, 0]}')
+    print(f'tp[0,2,:10,:10,1]:{tp[0, 2, 0, 0, 0]}')
+    print(f'tp[1,2,:10,:10,1]:{tp[1, 2, 0, 0, 0]}')
+
+    print(f'net_output[0,0,:10,:10,1]:{net_output[0, 0, 0, 0, 0]}')
+    print(f'net_output[1,0,:10,:10,1]:{net_output[1, 0, 0, 0, 0]}')
+    print(f'net_output[0,1,:10,:10,1]:{net_output[0, 1, 0, 0, 0]}')
+    print(f'net_output[1,1,:10,:10,1]:{net_output[1, 1, 0, 0, 0]}')
+    print(f'net_output[0,2,:10,:10,1]:{net_output[0, 2, 0, 0, 0]}')
+    print(f'net_output[1,2,:10,:10,1]:{net_output[1, 2, 0, 0, 0]}')
 
     raise Exception('Testing')
     fp = net_output * (1 - y_onehot)
