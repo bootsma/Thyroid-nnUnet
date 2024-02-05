@@ -132,8 +132,12 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
     print(f'Net out shape: {net_output.shape}')
 
     print(f'Y_onehot shape: {y_onehot.shape}')
-    raise Exception('Testing')
+
     tp = net_output * y_onehot
+    print(f'tp[0,0,:10,:10,1]:{tp[0,0,:30,:30,:2]}')
+    print(f'tp[0,0,:10,:10,1]:{tp[1, 0, :30, :30, :2]}')
+
+    raise Exception('Testing')
     fp = net_output * (1 - y_onehot)
     fn = (1 - net_output) * y_onehot
     tn = (1 - net_output) * (1 - y_onehot)
