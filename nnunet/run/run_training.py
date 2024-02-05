@@ -132,7 +132,7 @@ def main():
     #     force_separate_z = True
     # else:
     #     raise ValueError("force_separate_z must be None, True or False. Given: %s" % force_separate_z)
-
+    print(f'Network:{network}\nTask: {task}\nTrainer:{network_trainer}\nPlans ID: {plans_identifier}\n')
     plans_file, output_folder_name, dataset_directory, batch_dice, stage, \
     trainer_class = get_default_configuration(network, task, network_trainer, plans_identifier)
 

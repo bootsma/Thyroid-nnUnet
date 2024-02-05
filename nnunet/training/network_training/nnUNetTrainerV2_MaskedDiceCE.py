@@ -197,7 +197,7 @@ class nnUNetTrainerV2_MaskedDiceCE_IgnoreOut(nnUNetTrainerV2):
         self.initial_lr = 1e-2
         self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, mask_ignore_type =ignore_outside_main_label)
 
-class nnUNetTrainerV2_MaskedDiceCE_IgnoreInside(nnUNetTrainerV2):
+class nnUNetTrainerV2_MaskedDiceCE(nnUNetTrainerV2):#nnUNetTrainerV2_MaskedDiceCE_IgnoreInside(nnUNetTrainerV2):
     """
     Info for Fabian: same as internal nnUNetTrainerV2_2
     """
