@@ -42,7 +42,7 @@ class DC_and_CE_loss_masked(nn.Module):
         :param weight_ce:
         :param weight_dice:
         """
-        super(DC_and_CE_loss, self).__init__()
+        super(DC_and_CE_loss_masked, self).__init__()
 
         self.ignore_label = None
         square_dice = False
