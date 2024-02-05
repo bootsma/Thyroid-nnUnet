@@ -101,6 +101,7 @@ class DC_and_CE_loss_masked(nn.Module):
 
         mask_data2ignore = net_output==self.ignore_label
         mask_target = target == keep_label
+        print(f'Types, d2ignor: {mask_data2ignore}, target: {mask_target}, target: {target}, out: {net_output}')
         #ignore mislabeled data inside the target
         mask_data2ignore = torch.logical_and(mask_data2ignore, mask_target)
         mask = ~mask_data2ignore
