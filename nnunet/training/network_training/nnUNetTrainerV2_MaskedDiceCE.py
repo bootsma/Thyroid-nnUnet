@@ -75,9 +75,11 @@ class DC_and_CE_loss_masked(nn.Module):
         """
         mask = None
 
+        assert target.shape[1] == 1, 'not implemented for one hot encoding'
         if target.shape[1] == 1:
-            print('Not suported in one hot encoding')
-            raise Exception('Unsupported masking of labels')
+            pass
+        else:
+            raise Exception('Not implemented for one hot encoding')
 
         seg_labels, cnts = torch.unique(target, return_counts=True)
 
