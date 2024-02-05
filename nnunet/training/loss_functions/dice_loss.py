@@ -182,11 +182,15 @@ class SoftDiceLoss(nn.Module):
         else:
             axes = list(range(2, len(shp_x)))
 
+        print('WHAT')
+
         if self.apply_nonlin is not None:
             print(f'Size: {x.shape}')
             print(f'x: {x}')
             print('APPLY NONLIN')
             x = self.apply_nonlin(x)
+
+        print('Eval TP')
 
         tp, fp, fn, _ = get_tp_fp_fn_tn(x, y, axes, loss_mask, False)
 
