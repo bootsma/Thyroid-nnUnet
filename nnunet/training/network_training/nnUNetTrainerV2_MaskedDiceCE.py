@@ -88,8 +88,10 @@ class DC_and_CE_loss_masked(nn.Module):
         ignore_label = -1
         if 1 not in seg_labels:
             ignore_label = 1
+            keep_label = 2
         elif 2 not in seg_labels:
             ignore_label = 2
+            keep_label = 1
         elif cnts[seg_labels == 1] > cnts[seg_labels == 2]:
             print('Target has labels 1 and 2')
             ignore_label = 1
