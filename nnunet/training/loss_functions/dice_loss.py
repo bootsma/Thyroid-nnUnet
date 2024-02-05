@@ -121,12 +121,17 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
 
         if all([i == j for i, j in zip(net_output.shape, gt.shape)]):
             # if this is the case then gt is probably already a one hot encoding
+            print('One hot this way')
             y_onehot = gt
         else:
             gt = gt.long()
             y_onehot = torch.zeros(shp_x, device=net_output.device)
             y_onehot.scatter_(1, gt, 1)
     print(f'NET_OUT: {net_output}')
+    print(f'Yonehot: { y_onehot}')
+    print(f'Net out shape: {net_output.shape}')
+
+    print(f'Y_onehot shape: {y_onehot.shape}')
     raise Exception('Testing')
     tp = net_output * y_onehot
     fp = net_output * (1 - y_onehot)
