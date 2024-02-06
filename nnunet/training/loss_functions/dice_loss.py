@@ -114,6 +114,7 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
 
     shp_x = net_output.shape
     shp_y = gt.shape
+    print(f'GT Shape: {shp_y}, X: {shp_x}')
 
     with torch.no_grad():
         if len(shp_x) != len(shp_y):
@@ -127,8 +128,9 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
             gt = gt.long()
             y_onehot = torch.zeros(shp_x, device=net_output.device)
             y_onehot.scatter_(1, gt, 1)
-    print(f'NET_OUT: {net_output}')
-    print(f'Yonehot: { y_onehot}')
+    #print(f'NET_OUT: {net_output}')
+
+    #print(f'Yonehot: { y_onehot}')
     print(f'Net out shape: {net_output.shape}')
 
     print(f'Y_onehot shape: {y_onehot.shape}')
