@@ -206,7 +206,6 @@ class SoftDiceLoss(nn.Module):
 
         if self.apply_nonlin is not None:
             print(f'Size: {x.shape}')
-            print(f'x: {x}')
             print('APPLY NONLIN')
             x = self.apply_nonlin(x)
 

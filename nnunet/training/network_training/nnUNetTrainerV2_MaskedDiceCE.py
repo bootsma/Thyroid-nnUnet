@@ -110,7 +110,7 @@ class DC_and_CE_loss_masked(nn.Module):
         #mask = mask.float()
         #target[mask_data2ignore] = 0
 
-
+        print(f'NET_OUT: {net_output.shape}, TARGET: {target.shape}')
         dc_loss = self.dc(net_output, target, loss_mask=mask) if self.weight_dice != 0 else 0
         if self.log_dice:
             dc_loss = -torch.log(-dc_loss)
