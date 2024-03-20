@@ -114,7 +114,7 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
 
     shp_x = net_output.shape
     shp_y = gt.shape
-    print(f'GT Shape: {shp_y}, X: {shp_x}')
+    #print(f'GT Shape: {shp_y}, X: {shp_x}')
 
     with torch.no_grad():
         if len(shp_x) != len(shp_y):
@@ -122,7 +122,7 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
 
         if all([i == j for i, j in zip(net_output.shape, gt.shape)]):
             # if this is the case then gt is probably already a one hot encoding
-            print('One hot this way')
+            #print('One hot this way')
             y_onehot = gt
         else:
             gt = gt.long()
@@ -131,11 +131,12 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
     #print(f'NET_OUT: {net_output}')
 
     #print(f'Yonehot: { y_onehot}')
-    print(f'Net out shape: {net_output.shape}')
+    #print(f'Net out shape: {net_output.shape}')
 
-    print(f'Y_onehot shape: {y_onehot.shape}')
+    #print(f'Y_onehot shape: {y_onehot.shape}')
 
     tp = net_output * y_onehot
+    """
     print(f'yoh[0,0,:10,:10,1]:{y_onehot[0,0,0,0,0]}')
     print(f'yoh[1,0,:10,:10,1]:{y_onehot[1, 0, 0, 0, 0]}')
     print(f'yoh[0,1,:10,:10,1]:{y_onehot[0, 1, 0, 0, 0]}')
@@ -158,6 +159,8 @@ def get_tp_fp_fn_tn(net_output, gt, axes=None, mask=None, square=False):
     print(f'net_output[1,2,:10,:10,1]:{net_output[1, 2, 0, 0, 0]}')
 
     raise Exception('Testing')
+    """
+
     fp = net_output * (1 - y_onehot)
     fn = (1 - net_output) * y_onehot
     tn = (1 - net_output) * (1 - y_onehot)
